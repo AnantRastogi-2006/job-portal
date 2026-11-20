@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+# JobHub - Job Portal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A job portal where **employers** post jobs and **job seekers** apply for them.
+Built with **React** (frontend) and **Java Servlets + JSP + JDBC + MySQL** (backend).
 
-## Available Scripts
+## Features
+- Sign up / log in as Employer or Job Seeker (passwords stored as salted PBKDF2 hashes)
+- Browse and filter jobs, view details, apply (job seekers only)
+- Post jobs (employers only) - roles are enforced on the server (HTTP 403 otherwise)
+- My Applications page
+- Server-rendered job list with JSP at `/jobs.jsp`
 
-In the project directory, you can run:
+## Tech stack
+| Layer | Technology |
+|---|---|
+| Frontend | React, lucide-react, Jest + Testing Library |
+| Backend | Java 11+, HttpServlet, JSP, JDBC, Gson, Maven, Jetty |
+| Database | MySQL 8 |
+| Tests | JUnit 5 (backend), Jest (frontend) |
 
-### `npm start`
+## Requirements
+JDK 11 or newer, Maven 3.8+, MySQL 8, Node.js 18+ and npm.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## How to run
+1. **Database**
+   ```
+   mysql -u root -p < backend/db/schema.sql
+   ```
+2. **Backend** (new terminal)
+   ```
+   cd backend
+   set JOBHUB_DB_PASSWORD=your_mysql_password      (PowerShell: $env:JOBHUB_DB_PASSWORD='your_mysql_password')
+   mvn test
+   mvn jetty:run
+   ```
+   Open http://localhost:8080/jobs.jsp to check the JSP page.
+3. **Frontend** (second terminal)
+   ```
+   cd frontend
+   npm install
+   npm start
+   ```
+   Open http://localhost:3000 (`package.json` has `"proxy": "http://localhost:8080"`).
+4. **Frontend tests**: `npm test`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project structure
+```
+backend/
+  db/schema.sql                 tables + sample jobs
+  src/main/java/com/jobhub/
+    model/      User (abstract), Employer, JobSeeker, Job, Application, Validatable
+    dao/        Repository interfaces
+    jdbc/       JDBC implementations (PreparedStatement)
+    servlet/    AuthServlet, JobServlet, ApplicationServlet
+    exception/  JobHubException and subclasses
+    util/       PasswordHasher, Html
+  src/main/webapp/jobs.jsp
+  src/test/java/            JUnit tests
+frontend/src/
+  pages/  components/  hooks/  services/  utils/
+```
 
-### `npm test`
+## API
+| Method | URL | Who |
+|---|---|---|
+| POST | /api/auth/register, /api/auth/login, /api/auth/logout | anyone |
+| GET | /api/auth/me | logged in |
+| GET | /api/jobs | anyone |
+| POST | /api/jobs | employer only |
+| GET | /api/applications | job seeker: own, employer: received |
+| POST | /api/applications | job seeker only |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Team
+- [Name 1] - [what they built]
+- [Name 2] - [what they built]
